@@ -13,7 +13,7 @@ class LoginController extends AbstractController
      * @Route("/api/users/login", methods={"POST"}, name="api_users_login")
      * @return void
      */
-    public function login():void
+    public function login(): void
     {
         throw new \RuntimeException('Should not be reached.');
     }

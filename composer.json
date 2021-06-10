@@ -23,7 +23,8 @@
         "symfony/runtime": "5.3.*",
         "symfony/security-bundle": "5.3.*",
         "symfony/yaml": "5.3.*",
-      "ext-http": "*"
+        "ext-http": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "symfony/debug-bundle": "^5.3",

@@ -6,19 +6,15 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 final class RegisterController extends AbstractController
 {
-    /**
-     * @var FormFactoryInterface
-     */
-    private FormFactoryInterface $formFactory;
     /**
      * @var UserPasswordHasherInterface
      */
@@ -34,30 +30,26 @@ final class RegisterController extends AbstractController
 
     /**
      * RegisterController constructor.
-     * @param FormFactoryInterface $factory
      * @param UserPasswordHasherInterface $hasher
      * @param EntityManagerInterface $manager
      * @param UserRepository $userRepo
      */
     public function __construct(
-        FormFactoryInterface $factory,
         UserPasswordHasherInterface $hasher,
         EntityManagerInterface $manager,
         UserRepository $userRepo
     )
     {
-        $this->formFactory = $factory;
         $this->passwordHasher = $hasher;
         $this->entityManager = $manager;
         $this->userRepository = $userRepo;
     }
-
     /**
      * @Route("/api/register", name="register")
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
-    public function register(Request $request)
+    public function register(Request $request): JsonResponse
     {
         $body = $request->getContent();
         $data = json_decode($body, true);
