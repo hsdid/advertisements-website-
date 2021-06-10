@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -18,31 +20,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $email;
+    private string $email;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $username;
+    private string $username;
 
     /**
      * @var array
      * @ORM\Column(type="json")
      */
-    private $roles = [];
+    private array $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private $password;
+    private string $password;
+
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="user", cascade={"REMOVE"})
+     */
+    private ArrayCollection $products;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -75,10 +88,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * A visual identifier that represents this user.
      *
      * @see UserInterface
+     * @return string
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 
     /**
@@ -94,17 +108,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @param array $roles
-     * @return $this
      */
-    public function setRoles(array $roles): self
+    public function setRoles(array $roles)
     {
         $this->roles = $roles;
-
-        return $this;
     }
 
     /**
      * @see PasswordAuthenticatedUserInterface
+     * @return string
      */
     public function getPassword(): string
     {
@@ -113,13 +125,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @param string $password
-     * @return $this
      */
     public function setPassword(string $password): self
     {
         $this->password = $password;
-
-        return $this;
     }
 
     /**
@@ -156,5 +165,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username)
     {
         $this->username = $username;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function addProduct(Product $product)
+    {
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+            $product->setUser($this);
+        }
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function removeProduct(Product $product): self
+    {
+        if ($this->products->removeElement($product)) {
+            // set the owning side to null (unless already changed)
+            if ($product->getUser() === $this) {
+                $product->setUser(null);
+            }
+        }
+        return $this;
     }
 }
