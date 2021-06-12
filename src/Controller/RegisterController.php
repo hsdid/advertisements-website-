@@ -45,7 +45,7 @@ final class RegisterController extends AbstractController
         $this->userRepository = $userRepo;
     }
     /**
-     * @Route("/api/register", name="register")
+     * @Route("/api/register", methods={"POST"}, name="register")
      * @param Request $request
      * @return JsonResponse
      */

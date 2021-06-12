@@ -126,7 +126,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @param string $password
      */
-    public function setPassword(string $password): self
+    public function setPassword(string $password)
     {
         $this->password = $password;
     }
@@ -188,6 +188,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @param Product $product
+     * @return User
      */
     public function removeProduct(Product $product): self
     {
