@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,49 +22,47 @@ final class RegisterController extends AbstractController
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $entityManager;
-    /**
-     * @var UserRepository
-     */
-    private UserRepository $userRepository;
 
     /**
      * RegisterController constructor.
      * @param UserPasswordHasherInterface $hasher
      * @param EntityManagerInterface $manager
-     * @param UserRepository $userRepo
      */
     public function __construct(
         UserPasswordHasherInterface $hasher,
-        EntityManagerInterface $manager,
-        UserRepository $userRepo
+        EntityManagerInterface $manager
     )
     {
         $this->passwordHasher = $hasher;
         $this->entityManager = $manager;
-        $this->userRepository = $userRepo;
     }
     /**
-     * @Route("/api/register", methods={"POST"}, name="register")
+     * @Route("/api/registers", methods={"POST"}, name="register")
      * @param Request $request
      * @return JsonResponse
      */
     public function register(Request $request): JsonResponse
     {
-        $body = $request->getContent();
-        $data = json_decode($body, true);
 
-        if ($this->userRepository->findOneBy(['email' => $data['email']])) {
-            return $this->json(['msg' => 'user already exist']);
-        }
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
-        $form->submit($data);
+        $form->submit(json_decode($request->getContent(),true));
 
-        $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
+        if ($form->isValid()) {
+            $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
-        return $this->json(['user' => $user, 'msg' => 'succes']);
+            return $this->json(['user' => $user, 'success' => 'User created']);
+        }
+
+        $errors = [];
+        foreach ($form->getErrors(true, true) as $error) {
+            $propertyPath = str_replace('data.', '', $error->getCause()->getPropertyPath());
+            $errors[$propertyPath] = $error->getMessage();
+        }
+
+        return $this->json(['errors' => $errors]);
     }
 }
