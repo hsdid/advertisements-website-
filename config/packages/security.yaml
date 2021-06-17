@@ -1,13 +1,13 @@
 security:
     encoders:
         App\Entity\User:
-            algorithm: bcrypt
+            algorithm: auto
 
     providers:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: email
+                property: username
 
     firewalls:
         dev:
@@ -15,15 +15,24 @@ security:
             security: false
 
         login:
-            pattern: ^/api/users/login
+            pattern: ^/api/login
             stateless: true
             anonymous: true
+            provider: app_user_provider
             json_login:
-                check_path: api_users_login
+                check_path: /api/login
+                username_path: username
+                password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        register:
+            pattern: ^/api/register
+            stateless: true
+            anonymous: true
+
         api:
             pattern: ^/api
+            provider: app_user_provider
             stateless: true
             anonymous: true
             guard:
@@ -33,5 +42,6 @@ security:
             anonymous: true
 
     access_control:
-         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-
+         - { path: ^/api/login,    roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/api,          roles: IS_AUTHENTICATED_FULLY }
