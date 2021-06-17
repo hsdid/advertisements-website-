@@ -37,7 +37,7 @@ final class RegisterController extends AbstractController
         $this->entityManager = $manager;
     }
     /**
-     * @Route("/api/registers", methods={"POST"}, name="register")
+     * @Route("/api/register", methods={"POST"}, name="register")
      * @param Request $request
      * @return JsonResponse
      */
