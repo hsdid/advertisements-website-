@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Product;
 
 use App\Entity\Product;
+use App\Form\FormErrors;
 use App\Form\ProductType;
 use App\Repository\CategoryRepository;
+use App\Repository\ProductRepository;
 use App\Security\UserResolver;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,35 +26,41 @@ class CreateProductController extends AbstractController
      * @var CategoryRepository
      */
     private CategoryRepository $categoryRepository;
-
     /**
-     * @var EntityManagerInterface
+     * @var ProductRepository
      */
-    private EntityManagerInterface $entityManager;
+    private ProductRepository $productRepository;
+    /**
+     * @var FormErrors
+     */
+    private FormErrors $formErrors;
 
     /**
      * ProductController constructor.
      * @param UserResolver $userResolver
      * @param CategoryRepository $categoryRepository
-     * @param EntityManagerInterface $manager
+     * @param ProductRepository $productRepository
      */
     public function __construct(
         UserResolver $userResolver,
         CategoryRepository $categoryRepository,
-        EntityManagerInterface $manager
+        ProductRepository $productRepository,
+        FormErrors $formErrors
     )
     {
         $this->userResolver = $userResolver;
         $this->categoryRepository = $categoryRepository;
-        $this->entityManager = $manager;
+        $this->productRepository = $productRepository;
+        $this->formErrors = $formErrors;
     }
 
     /**
      * @Route("/api/product", methods={"POST"}, name="create_product")
      * @param Request $request
      * @return JsonResponse
+     * @throws ORMException
      */
-    public function createProduct(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         $product = new Product();
 
@@ -68,17 +76,13 @@ class CreateProductController extends AbstractController
         $form->submit($data);
 
         if ($form->isValid()) {
-            $this->entityManager->persist($product);
-            $this->entityManager->flush();
+
+            $this->productRepository->save($product);
 
             return $this->json(['product' => $product->getName() ,'success' => 'product Created']);
         }
 
-        $errors = [];
-        foreach ($form->getErrors(true, true) as $error) {
-            $propertyPath = str_replace('data.', '', $error->getCause()->getPropertyPath());
-            $errors[$propertyPath] = $error->getMessage();
-        }
+       $errors = $this->formErrors->getErrors($form);
 
         return $this->json(['errors' => $errors]);
     }
