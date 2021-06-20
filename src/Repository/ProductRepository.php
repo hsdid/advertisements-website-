@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,6 +20,39 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
+
+    /**
+     * @param Product $product
+     * @throws ORMException
+     */
+    public function save(Product $product)
+    {
+        $this->_em->persist($product);
+        $this->_em->flush();
+    }
+
+    /**
+     * @param int $id
+     * @throws ORMException
+     */
+    public function deleteById(int $id)
+    {
+        $product = $this->find($id);
+        $this->_em->remove($product);
+        $this->_em->flush();
+    }
+
+    /**
+     * @param Product $product
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function delete(Product $product)
+    {
+        $this->_em->remove($product);
+        $this->_em->flush();
+    }
+
 
     // /**
     //  * @return Product[] Returns an array of Product objects
