@@ -22,10 +22,19 @@ class Category
     private int $id;
 
     /**
-     * @var int
-     * @ORM\Column(type="integer", nullable=true)
+     * One Category has Many Categories.
+     * @ORM\OneToMany(targetEntity="App\Entity\Category", mappedBy="parent")
      */
-    private int $parentId;
+    private $children;
+
+
+    /**
+     * Many Categories have One Category.
+     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="children")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true, options={"default" : "NULL"})
+     */
+    private Category $parent;
+
 
     /**
      * @var string
@@ -34,13 +43,15 @@ class Category
     private string $title;
 
     /**
+     * @var Collection|Product[]
      * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="category")
      */
-    private ArrayCollection $products;
+    private Collection $products;
 
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     /**
@@ -51,21 +62,6 @@ class Category
         return $this->id;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getParentId(): ?int
-    {
-        return $this->parentId;
-    }
-
-    /**
-     * @param int $parentId
-     */
-    public function setParentId(int $parentId)
-    {
-        $this->parentId = $parentId;
-    }
 
     /**
      * @return string
@@ -117,6 +113,48 @@ class Category
                 $product->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Category[]
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(Category $child): self
+    {
+        if (!$this->children->contains($child)) {
+            $this->children[] = $child;
+            $child->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChild(Category $child): self
+    {
+        if ($this->children->removeElement($child)) {
+            // set the owning side to null (unless already changed)
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): self
+    {
+        $this->parent = $parent;
 
         return $this;
     }

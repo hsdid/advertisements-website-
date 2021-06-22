@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,6 +19,38 @@ class CategoryRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Category::class);
+    }
+
+    /**
+     * @param Category $category
+     * @throws ORMException
+     */
+    public function save(Category $category)
+    {
+        $this->_em->persist($category);
+        $this->_em->flush();
+    }
+
+    /**
+     * @param int $id
+     * @throws ORMException
+     */
+    public function deleteById(int $id)
+    {
+        $category = $this->find($id);
+        $this->_em->remove($category);
+        $this->_em->flush();
+    }
+
+    /**
+     * @param Category $category
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function delete(Category $category)
+    {
+        $this->_em->remove($category);
+        $this->_em->flush();
     }
 
     // /**

@@ -17,6 +17,10 @@ class GetOneCategoryController extends AbstractController
      */
     private CategoryRepository $categoryRepository;
 
+    /**
+     * GetOneCategoryController constructor.
+     * @param CategoryRepository $categoryRepository
+     */
     public function __construct(CategoryRepository $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
