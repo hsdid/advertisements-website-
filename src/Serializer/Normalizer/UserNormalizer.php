@@ -5,6 +5,7 @@ namespace App\Serializer\Normalizer;
 
 
 use App\Entity\User;
+use ArrayObject;
 use Symfony\Component\Serializer\Exception\CircularReferenceException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
@@ -33,7 +34,7 @@ class UserNormalizer implements NormalizerInterface
      * @param mixed $object
      * @param string|null $format
      * @param array $context
-     * @return array|\ArrayObject|bool|float|int|mixed|string|null
+     * @return array|ArrayObject|bool|float|int|mixed|string|null
      * @throws ExceptionInterface
      */
     public function normalize($object, string $format = null, array $context = [])

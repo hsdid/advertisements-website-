@@ -10,15 +10,23 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class CircularReferenceHandler
 {
     /**
-     * @var
+     * @var UrlGeneratorInterface
      */
     private UrlGeneratorInterface $router;
 
+    /**
+     * CircularReferenceHandler constructor.
+     * @param UrlGeneratorInterface $router
+     */
     public function __construct(UrlGeneratorInterface $router)
     {
         $this->router = $router;
     }
 
+    /**
+     * @param $object
+     * @return mixed|string
+     */
     public function __invoke($object)
     {
         switch ($object) {
