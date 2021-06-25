@@ -15,7 +15,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-
+/**
+ * Class CreateProductController
+ * @package App\Controller\Product
+ * @Route("/api/product", methods={"POST"}, name="create_product")
+ */
 class CreateProductController extends AbstractController
 {
     /**
@@ -40,6 +44,7 @@ class CreateProductController extends AbstractController
      * @param UserResolver $userResolver
      * @param CategoryRepository $categoryRepository
      * @param ProductRepository $productRepository
+     * @param FormErrors $formErrors
      */
     public function __construct(
         UserResolver $userResolver,
@@ -55,7 +60,6 @@ class CreateProductController extends AbstractController
     }
 
     /**
-     * @Route("/api/product", methods={"POST"}, name="create_product")
      * @param Request $request
      * @return JsonResponse
      * @throws ORMException
