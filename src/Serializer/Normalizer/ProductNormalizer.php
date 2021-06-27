@@ -34,9 +34,18 @@ class ProductNormalizer implements  NormalizerInterface
      * @return array|ArrayObject|bool|float|int|mixed|string|null
      * @throws ExceptionInterface
      */
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = []): array
     {
-        return $this->objectNormalizer->normalize($object, $format, $context);
+        return [
+            'id' => $object->getId(),
+            'name' => $object->getName(),
+            'price' => $object->getPrice(),
+            'techCondition' => $object->getTechCondition(),
+            'createdAt' => $object->getCreatedAt(),
+            'description' => $object->getDescription(),
+            'category' => ['categoryName' => $object->getCategory()->getTitle(), 'id' => $object->getCategory()->getId()],
+            'user' => ['userName' => $object->getUser()->getUserName(), 'id' => $object->getUser()->getId()]
+        ];
     }
 
     /**
