@@ -31,7 +31,7 @@ class Category
     /**
      * Many Categories have One Category.
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="children")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true, options={"default" : "NULL"})
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable="true")
      */
     private Category $parent;
 

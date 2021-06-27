@@ -51,7 +51,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="user", cascade={"REMOVE"})
      */
-    private $products;
+    private Collection $products;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SaveProduct", mappedBy="user")
+     */
+    private Collection $savedProducts;
 
     /**
      * @ORM\Column(type="boolean")
@@ -61,6 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->savedProducts = new ArrayCollection();
     }
 
     /**
@@ -227,5 +233,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getIsVerified(): ?bool
     {
         return $this->isVerified;
+    }
+
+    /**
+     * @return Collection|SaveProduct[]
+     */
+    public function getSavedProducts(): Collection
+    {
+        return $this->savedProducts;
+    }
+
+    public function addSavedProduct(SaveProduct $savedProduct): self
+    {
+        if (!$this->savedProducts->contains($savedProduct)) {
+            $this->savedProducts[] = $savedProduct;
+            $savedProduct->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSavedProduct(SaveProduct $savedProduct): self
+    {
+        if ($this->savedProducts->removeElement($savedProduct)) {
+            // set the owning side to null (unless already changed)
+            if ($savedProduct->getUser() === $this) {
+                $savedProduct->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

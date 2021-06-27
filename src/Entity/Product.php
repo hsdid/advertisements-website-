@@ -65,6 +65,11 @@ class Product
     private User $user;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SaveProduct", mappedBy="product", cascade={"REMOVE"})
+     */
+    private $savedProducts;
+
+    /**
      * @var DateTimeInterface
      * @ORM\Column(type="datetime", options={"default" : "CURRENT_TIMESTAMP"} )
      */
@@ -73,6 +78,7 @@ class Product
     public function __construct()
     {
         $this->attributes = new ArrayCollection();
+        $this->savedProducts = new ArrayCollection();
     }
 
     /**
@@ -232,5 +238,35 @@ class Product
     public function setUser(User $user)
     {
         $this->user = $user;
+    }
+
+    /**
+     * @return Collection|SaveProduct[]
+     */
+    public function getSavedProducts(): Collection
+    {
+        return $this->savedProducts;
+    }
+
+    public function addSavedProduct(SaveProduct $savedProduct): self
+    {
+        if (!$this->savedProducts->contains($savedProduct)) {
+            $this->savedProducts[] = $savedProduct;
+            $savedProduct->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSavedProduct(SaveProduct $savedProduct): self
+    {
+        if ($this->savedProducts->removeElement($savedProduct)) {
+            // set the owning side to null (unless already changed)
+            if ($savedProduct->getProduct() === $this) {
+                $savedProduct->setProduct(null);
+            }
+        }
+
+        return $this;
     }
 }
