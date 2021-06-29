@@ -25,7 +25,7 @@ class Category
      * One Category has Many Categories.
      * @ORM\OneToMany(targetEntity="App\Entity\Category", mappedBy="parent")
      */
-    private $children;
+    private Collection $children;
 
 
     /**
@@ -48,10 +48,18 @@ class Category
      */
     private Collection $products;
 
+    /**
+     * Attributes for product in specific Category
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="App\Entity\AttributesForCategory",  mappedBy="category")
+     */
+    private Collection $attributes;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
         $this->children = new ArrayCollection();
+        $this->attributes = new ArrayCollection();
     }
 
     /**
@@ -155,6 +163,36 @@ class Category
     public function setParent(?self $parent): self
     {
         $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AttributesForCategory[]
+     */
+    public function getAttributes(): Collection
+    {
+        return $this->attributes;
+    }
+
+    public function addAttribute(AttributesForCategory $attribute): self
+    {
+        if (!$this->attributes->contains($attribute)) {
+            $this->attributes[] = $attribute;
+            $attribute->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttribute(AttributesForCategory $attribute): self
+    {
+        if ($this->attributes->removeElement($attribute)) {
+            // set the owning side to null (unless already changed)
+            if ($attribute->getCategory() === $this) {
+                $attribute->setCategory(null);
+            }
+        }
 
         return $this;
     }
