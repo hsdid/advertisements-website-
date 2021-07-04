@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\ProductAttribute;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,6 +21,25 @@ class ProductAttributeRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductAttribute::class);
     }
 
+    /**
+     * @param ProductAttribute $productAttribute
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(ProductAttribute $productAttribute)
+    {
+        $this->_em->persist($productAttribute);
+        $this->_em->flush();
+    }
+
+    /**
+     * @param ProductAttribute $productAttribute
+     * @throws ORMException
+     */
+    public function persist(ProductAttribute $productAttribute)
+    {
+        $this->_em->persist($productAttribute);
+    }
     // /**
     //  * @return ProductAttribute[] Returns an array of ProductAttribute objects
     //  */
