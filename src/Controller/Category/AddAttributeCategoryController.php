@@ -6,6 +6,7 @@ namespace App\Controller\Category;
 use App\Entity\AttributesForCategory;
 use App\Repository\AttributesForCategoryRepository;
 use App\Repository\CategoryRepository;
+use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,7 +41,7 @@ class AddAttributeCategoryController extends AbstractController
      * @param Request $request
      * @param int $id
      * @return JsonResponse
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function __invoke(Request $request, int $id): JsonResponse
     {
@@ -55,9 +56,10 @@ class AddAttributeCategoryController extends AbstractController
         $attribute = new AttributesForCategory();
         $attribute->setTitle($data['title']);
         $attribute->setCategory($category);
+        $attribute->setKey($category['key']);
 
         $this->attributesForCategoryRepository->save($attribute);
 
-        return $this->json(['success' => 'Atribute added']);
+        return $this->json(['success' => 'Attribute added']);
     }
 }
