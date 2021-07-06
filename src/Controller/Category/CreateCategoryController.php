@@ -11,10 +11,14 @@ use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/api/category", methods={"POST"}, name="api_create_category")
+ * @IsGranted("ROLE_ADMIN", statusCode=404, message="not found")
+ *
+ * @Route("/api/admin/category", methods={"POST"}, name="api_create_category")
  */
 class CreateCategoryController extends AbstractController
 {
