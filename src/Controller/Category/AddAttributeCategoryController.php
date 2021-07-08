@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -56,6 +57,6 @@ class AddAttributeCategoryController extends AbstractController
 
         $this->attributesForCategoryRepository->save($attribute);
 
-        return $this->json(['success' => 'Attribute added']);
+        return $this->json(['success' => 'Attribute added'], Response::HTTP_CREATED);
     }
 }

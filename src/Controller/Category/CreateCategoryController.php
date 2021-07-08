@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -58,9 +59,15 @@ class CreateCategoryController extends AbstractController
 
         if ($form->isValid()) {
             $this->categoryRepository->save($category);
-            return $this->json(['category' => $category->getTitle(), 'success' => 'category created']);
+
+            return $this->json([
+                'category' => $category->getTitle(),
+                'success' => 'category created'
+            ],
+                Response::HTTP_CREATED
+            );
         }
 
-        return $this->json(['error' => 'category cant be added']);
+        return $this->json(['error' => 'category cant be added'], Response::HTTP_BAD_REQUEST);
     }
 }

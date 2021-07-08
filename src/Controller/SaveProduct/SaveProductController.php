@@ -51,10 +51,6 @@ class SaveProductController extends AbstractController
     {
         $user = $this->userResolver->getCurrentUser();
 
-        if (! $product) {
-            return $this->json(['error' => 'cant find '], Response::HTTP_NOT_FOUND);
-        }
-
         $saveProduct = new SaveProduct();
         $saveProduct->setUser($user);
         $saveProduct->setProduct($product);

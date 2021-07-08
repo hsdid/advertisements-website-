@@ -5,6 +5,7 @@ namespace App\Controller\User;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -20,7 +21,9 @@ class GetOneUserController extends AbstractController
     {
         return $this->json([
             'user' => $user,
-            'success' => 'success']
+            'success' => 'success'
+            ],
+            Response::HTTP_OK
         );
     }
 }

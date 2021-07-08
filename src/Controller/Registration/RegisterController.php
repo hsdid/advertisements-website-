@@ -71,14 +71,19 @@ final class RegisterController extends AbstractController
             try {
                 $this->userRepository->save($user);
             } catch (OptimisticLockException | ORMException $e) {
-                return $this->json(['errors' => 'User cant be registered']);
+                return $this->json(['errors' => 'User cant be registered'], Response::HTTP_CONFLICT);
             }
 
-            return $this->json(['user' => $user->getUsername(), 'success' => 'User created']);
+            return $this->json([
+                'user' => $user->getUsername(),
+                'success' => 'User created'
+            ],
+                Response::HTTP_CREATED
+            );
         }
 
         $errors = $this->formErrors->getErrors($form);
 
-        return $this->json(['errors' => $errors]);
+        return $this->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
     }
 }

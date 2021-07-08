@@ -128,6 +128,6 @@ class CreateProductController extends AbstractController
 
        $errors = $this->formErrors->getErrors($form);
 
-        return $this->json(['errors' => $errors]);
+        return $this->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
     }
 }

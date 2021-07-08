@@ -42,15 +42,15 @@ class DeleteProductController extends AbstractController
     public function __invoke(Product $product): JsonResponse
     {
         if (! $this->isGranted(AuthorVoter::DELETE, $product)) {
-            return $this->json(['error' => 'Product cant be deleted/ Dont exist']);
+            return $this->json(['error' => 'Product cant be deleted'], Response::HTTP_UNAUTHORIZED);
         }
 
         try {
             $this->productRepository->delete($product);
         } catch (ORMException $e) {
-            return $this->json(['error' => 'Product cant be deleted']);
+            return $this->json(['error' => 'Product cant be deleted'], Response::HTTP_CONFLICT);
         }
 
-        return $this->json(['success' => 'Product deleted successfully']);
+        return $this->json(['success' => 'Product deleted successfully'], Response::HTTP_OK);
     }
 }

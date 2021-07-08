@@ -46,7 +46,7 @@ class EditProductController extends AbstractController
     public function __invoke(Request $request, Product $product): JsonResponse
     {
         if (! $this->isGranted(AuthorVoter::EDIT, $product)) {
-            return $this->json(['error' => 'Product cant be updated/ Dont exist']);
+            return $this->json(['error' => 'Product cant be updated'], Response::HTTP_UNAUTHORIZED);
         }
 
         $data = json_decode($request->getContent(),true);
@@ -54,12 +54,17 @@ class EditProductController extends AbstractController
         $form = $this->createForm(ProductType::class, $product);
         $form->submit($data);
 
-        $this->productRepository->save($product);
+        if ($form->isValid()) {
 
-        return $this->json([
-            'product' => $product->getName(),
-            'success' => 'Product updated'],
-            Response::HTTP_OK
-        );
+            $this->productRepository->save($product);
+
+            return $this->json([
+                'product' => $product->getName(),
+                'success' => 'Product updated'],
+                Response::HTTP_OK
+            );
+        }
+
+        return $this->json(['error' => 'Product cant be updated'], Response::HTTP_BAD_REQUEST);
     }
 }

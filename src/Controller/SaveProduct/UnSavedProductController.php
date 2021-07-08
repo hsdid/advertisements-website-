@@ -49,7 +49,6 @@ class UnSavedProductController extends AbstractController
      */
     public function __invoke(int $id): JsonResponse
     {
-
         $user = $this->userResolver->getCurrentUser();
 
         $saveProduct = $this->saveProductRepository->findOneBy(
@@ -63,7 +62,7 @@ class UnSavedProductController extends AbstractController
         try {
             $this->saveProductRepository->delete($saveProduct);
         } catch (OptimisticLockException | ORMException $e) {
-            return $this->json(['error' => $e], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => $e], Response::HTTP_CONFLICT);
         }
 
         return $this->json(['success' => 'UnSaved product'], Response::HTTP_OK);

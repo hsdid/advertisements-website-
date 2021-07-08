@@ -25,7 +25,8 @@ class GetProductListController extends AbstractController
 
         return $this->json([
             'productCount' => count($productList),
-            'products' => $productList],
+            'products' => $productList
+        ],
             Response::HTTP_OK
         );
     }

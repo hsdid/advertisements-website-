@@ -5,6 +5,7 @@ namespace App\Controller\Product;
 use App\Entity\Product;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -18,6 +19,11 @@ class GetOneProductController extends AbstractController
      */
     public function __invoke(Product $product): JsonResponse
     {
-        return $this->json(['product' => $product, 'success' => 'success']);
+        return $this->json([
+                'product' => $product,
+                'success' => 'success'
+            ],
+            Response::HTTP_OK
+        );
     }
 }

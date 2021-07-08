@@ -5,6 +5,7 @@ namespace App\Controller\Category;
 use App\Entity\Category;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -18,6 +19,6 @@ class GetOneCategoryController extends AbstractController
      */
     public function __invoke(Category $category): JsonResponse
     {
-        return $this->json(['category' => $category]);
+        return $this->json(['category' => $category], Response::HTTP_OK);
     }
 }
