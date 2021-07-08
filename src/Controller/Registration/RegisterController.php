@@ -16,6 +16,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class RegisterController
+ * @package App\Controller\Registration
+ * @Route("/api/register", methods={"POST"}, name="register")
+ */
 final class RegisterController extends AbstractController
 {
     /**
@@ -49,11 +54,10 @@ final class RegisterController extends AbstractController
         $this->formErrors = $formErrors;
     }
     /**
-     * @Route("/api/register", methods={"POST"}, name="register")
      * @param Request $request
      * @return JsonResponse
      */
-    public function register(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
 
         $user = new User();

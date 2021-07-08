@@ -4,7 +4,7 @@
 namespace App\Controller\Category;
 
 
-use App\Repository\CategoryRepository;
+use App\Entity\Category;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,33 +16,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class GetProductListController extends AbstractController
 {
     /**
-     * @var CategoryRepository
-     */
-    private CategoryRepository $categoryRepository;
-
-    /**
-     * GetProductListController constructor.
-     * @param CategoryRepository $categoryRepository
-     */
-    public function __construct(CategoryRepository $categoryRepository)
-    {
-        $this->categoryRepository = $categoryRepository;
-    }
-
-    /**
-     * @param int $id
+     * @param Category $category
      * @return JsonResponse
      */
-    public function __invoke(int $id): JsonResponse
+    public function __invoke(Category $category): JsonResponse
     {
-        $category = $this->categoryRepository->find($id);
-
-        if (! $category) {
-            return $this->json(['error' => 'cant find '], Response::HTTP_NOT_FOUND);
-        }
-
         $productList = $category->getProducts();
 
-        return $this->json(['productCount' => count($productList) ,'products' => $productList], Response::HTTP_OK);
+        return $this->json([
+            'productCount' => count($productList),
+            'products' => $productList],
+            Response::HTTP_OK
+        );
     }
 }

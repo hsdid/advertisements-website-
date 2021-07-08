@@ -36,17 +36,11 @@ class DeleteProductController extends AbstractController
     }
 
     /**
-     * @param int $id
+     * @param Product $product
      * @return JsonResponse
      */
-    public function __invoke(int $id): JsonResponse
+    public function __invoke(Product $product): JsonResponse
     {
-        $product = $this->productRepository->find($id);
-
-        if (! $product) {
-            return $this->json(['error' => 'Product cant be deleted/ Dont exist']);
-        }
-
         if (! $this->isGranted(AuthorVoter::DELETE, $product)) {
             return $this->json(['error' => 'Product cant be deleted/ Dont exist']);
         }

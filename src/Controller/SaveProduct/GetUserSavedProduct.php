@@ -37,6 +37,10 @@ class GetUserSavedProduct extends AbstractController
         $user = $this->userResolver->getCurrentUser();
         $countProduct = count($user->getSavedProducts());
 
-        return $this->json(['products' => $user->getSavedProducts(), 'count' => $countProduct], Response::HTTP_OK);
+        return $this->json([
+            'products' => $user->getSavedProducts(),
+            'count' => $countProduct],
+            Response::HTTP_OK
+        );
     }
 }

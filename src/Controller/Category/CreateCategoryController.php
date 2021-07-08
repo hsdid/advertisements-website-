@@ -22,7 +22,9 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class CreateCategoryController extends AbstractController
 {
-
+    /**
+     * @var CategoryRepository
+     */
     private CategoryRepository $categoryRepository;
 
     /**

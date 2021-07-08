@@ -2,42 +2,22 @@
 
 namespace App\Controller\Product;
 
-use App\Repository\ProductRepository;
+use App\Entity\Product;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/api/product/{id}", methods={"GET"}, name="api_get_one_product")
+ * @Route("/product/{id}", methods={"GET"}, name="api_get_one_product")
  */
 class GetOneProductController extends AbstractController
 {
     /**
-     * @var ProductRepository
-     */
-    private ProductRepository $productRepository;
-
-    /**
-     * GetOneProductController constructor.
-     * @param ProductRepository $productRepository
-     */
-    public function __construct(ProductRepository $productRepository)
-    {
-        $this->productRepository = $productRepository;
-    }
-
-    /**
-     * @param int $id
+     * @param Product $product
      * @return JsonResponse
      */
-    public function __invoke(int $id): JsonResponse
+    public function __invoke(Product $product): JsonResponse
     {
-        $product = $this->productRepository->find($id);
-
-        if (! $product) {
-            return $this->json(['errors' => 'Cant get this Product :/']);
-        }
-
         return $this->json(['product' => $product, 'success' => 'success']);
     }
 }

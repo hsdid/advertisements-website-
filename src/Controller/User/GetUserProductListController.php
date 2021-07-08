@@ -1,10 +1,8 @@
 <?php
 
-
 namespace App\Controller\User;
 
-
-use App\Repository\UserRepository;
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,33 +14,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class GetUserProductListController extends AbstractController
 {
     /**
-     * @var UserRepository
-     */
-    private UserRepository $userRepository;
-
-    /**
-     * GetUserProductListController constructor.
-     * @param UserRepository $userRepository
-     */
-    public function __construct(UserRepository $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
-
-    /**
-     * @param int $id
+     * @param User $user
      * @return JsonResponse
      */
-    public function __invoke(int $id): JsonResponse
+    public function __invoke(User $user): JsonResponse
     {
-        $user = $this->userRepository->find($id);
-
-        if (! $user) {
-            return $this->json(['error' => 'cant find '], Response::HTTP_NOT_FOUND);
-        }
-
         $productList = $user->getProducts();
 
-        return $this->json(['productCount' => count($productList) ,'products' => $productList], Response::HTTP_OK);
+        return $this->json([
+            'productCount' => count($productList),
+            'products' => $productList
+        ],
+            Response::HTTP_OK
+        );
     }
 }

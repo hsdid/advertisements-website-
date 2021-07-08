@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Controller\Category;
 
 use App\Repository\CategoryRepository;
@@ -11,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
  * Class GetCategoryListController
  * @package App\Controller\Category
- * @Route("/api/category", methods={"GET"}, name="api_get_list_category")
+ * @Route("/category", methods={"GET"}, name="api_get_list_category")
  */
 class GetCategoryListController extends AbstractController
 {
@@ -40,6 +39,6 @@ class GetCategoryListController extends AbstractController
             return $this->json(['error' => 'something went wrong']);
         }
 
-        return $this->json(['categoryList' => $categoryList, 'quantity' => count($categoryList)]);
+        return $this->json(['categoryList' => $categoryList, 'categoryCount' => count($categoryList)]);
     }
 }

@@ -4,6 +4,7 @@
 namespace App\Controller\Product;
 
 
+use App\Entity\Product;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use App\Security\Voter\AuthorVoter;
@@ -11,6 +12,7 @@ use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -37,18 +39,12 @@ class EditProductController extends AbstractController
 
     /**
      * @param Request $request
-     * @param int $id
+     * @param Product $product
      * @return JsonResponse
      * @throws ORMException
      */
-    public function __invoke(Request $request, int $id): JsonResponse
+    public function __invoke(Request $request, Product $product): JsonResponse
     {
-        $product = $this->productRepository->find($id);
-
-        if (! $product) {
-            return $this->json(['error' => 'cant find product']);
-        }
-
         if (! $this->isGranted(AuthorVoter::EDIT, $product)) {
             return $this->json(['error' => 'Product cant be updated/ Dont exist']);
         }
@@ -60,7 +56,10 @@ class EditProductController extends AbstractController
 
         $this->productRepository->save($product);
 
-        return $this->json(['product' => $product->getName() ,'success' => 'Product updated']);
-
+        return $this->json([
+            'product' => $product->getName(),
+            'success' => 'Product updated'],
+            Response::HTTP_OK
+        );
     }
 }

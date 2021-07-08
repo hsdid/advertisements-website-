@@ -4,8 +4,8 @@
 namespace App\Controller\SaveProduct;
 
 
+use App\Entity\Product;
 use App\Entity\SaveProduct;
-use App\Repository\ProductRepository;
 use App\Repository\SaveProductRepository;
 use App\Security\UserResolver;
 use Doctrine\ORM\ORMException;
@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class SaveProductController
  * @package App\Controller\SaveProduct
- * @Route("/api/save_product/{id}", methods={"POST"}, name="api_save_product")
+ * @Route("/api/save_product/{product}", methods={"POST"}, name="api_save_product")
  */
 class SaveProductController extends AbstractController
 {
@@ -26,10 +26,6 @@ class SaveProductController extends AbstractController
      */
     private UserResolver $userResolver;
     /**
-     * @var ProductRepository
-     */
-    private ProductRepository $productRepository;
-    /**
      * @var SaveProductRepository
      */
     private SaveProductRepository $saveProductRepository;
@@ -37,25 +33,23 @@ class SaveProductController extends AbstractController
     /**
      * SaveProductController constructor.
      * @param UserResolver $userResolver
+     * @param SaveProductRepository $saveProductRepository
      */
     public function __construct(
         UserResolver $userResolver,
-        ProductRepository $productRepository,
         SaveProductRepository $saveProductRepository
     )
     {
         $this->userResolver = $userResolver;
-        $this->productRepository = $productRepository;
         $this->saveProductRepository = $saveProductRepository;
     }
 
     /**
      * @throws ORMException
      */
-    public function __invoke(int $id): JsonResponse
+    public function __invoke(Product $product): JsonResponse
     {
         $user = $this->userResolver->getCurrentUser();
-        $product = $this->productRepository->find($id);
 
         if (! $product) {
             return $this->json(['error' => 'cant find '], Response::HTTP_NOT_FOUND);
@@ -67,6 +61,10 @@ class SaveProductController extends AbstractController
 
         $this->saveProductRepository->save($saveProduct);
 
-        return $this->json( ['success' => 'product save for later', 'product' => $product->getName()],Response::HTTP_CREATED);
+        return $this->json([
+            'success' => 'product save for later',
+            'product' => $product->getName()],
+            Response::HTTP_CREATED
+        );
     }
 }

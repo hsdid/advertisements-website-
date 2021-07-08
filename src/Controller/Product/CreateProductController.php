@@ -81,6 +81,10 @@ class CreateProductController extends AbstractController
         $data = json_decode($request->getContent(),true);
 
         $category = $this->categoryRepository->find($data['category']);
+
+        if (! $category) {
+            return $this->json(['errors' => 'Category dont exist']);
+        }
         // Get additional special attributes for product from category
         $categoryAttributes = $category->getAttributes();
 
@@ -92,7 +96,7 @@ class CreateProductController extends AbstractController
 
                 $productAttribute = new ProductAttribute();
                 $productAttribute->setTitle($attribute->getTitle());
-                $productAttribute->setValue($data[($attribute->getKey())]);
+                $productAttribute->setValue($data[($attribute->getName())]);
                 $productAttribute->setProduct($product);
 
                 $this->productAttributeRepository->persist($productAttribute);
@@ -114,7 +118,12 @@ class CreateProductController extends AbstractController
 
             $this->productRepository->save($product);
 
-            return $this->json(['product' => $product->getName() ,'success' => 'product Created']);
+            return $this->json([
+                'product' => $product->getName(),
+                'success' => 'product Created'
+            ],
+                Response::HTTP_CREATED
+            );
         }
 
        $errors = $this->formErrors->getErrors($form);

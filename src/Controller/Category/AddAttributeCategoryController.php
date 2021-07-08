@@ -4,8 +4,9 @@
 namespace App\Controller\Category;
 
 use App\Entity\AttributesForCategory;
+use App\Entity\Category;
 use App\Repository\AttributesForCategoryRepository;
-use App\Repository\CategoryRepository;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -22,41 +23,36 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class AddAttributeCategoryController extends AbstractController
 {
     /**
-     * @var CategoryRepository
+     * @var AttributesForCategoryRepository
      */
-    private CategoryRepository $categoryRepository;
-
     private AttributesForCategoryRepository $attributesForCategoryRepository;
 
+    /**
+     * AddAttributeCategoryController constructor.
+     * @param AttributesForCategoryRepository $attributesForCategoryRepository
+     */
     public function __construct(
-        CategoryRepository $categoryRepository,
         AttributesForCategoryRepository $attributesForCategoryRepository
     )
     {
-        $this->categoryRepository = $categoryRepository;
         $this->attributesForCategoryRepository = $attributesForCategoryRepository;
     }
 
     /**
      * @param Request $request
-     * @param int $id
+     * @param Category $category
      * @return JsonResponse
      * @throws ORMException
+     * @throws OptimisticLockException
      */
-    public function __invoke(Request $request, int $id): JsonResponse
+    public function __invoke(Request $request, Category $category): JsonResponse
     {
-        $category = $this->categoryRepository->find($id);
-
-        if (! $category) {
-            return $this->json(['error' => 'cant find category']);
-        }
-
         $data = json_decode($request->getContent(),true);
 
         $attribute = new AttributesForCategory();
         $attribute->setTitle($data['title']);
         $attribute->setCategory($category);
-        $attribute->setKey($category['key']);
+        $attribute->setName($data['name']);
 
         $this->attributesForCategoryRepository->save($attribute);
 
