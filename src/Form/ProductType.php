@@ -3,7 +3,10 @@
 namespace App\Form;
 
 
+use App\Entity\Category;
 use App\Entity\Product;
+use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -24,6 +27,12 @@ class ProductType extends AbstractType
             ->add('description', TextType::class)
             ->add('price', NumberType::class)
             ->add('techCondition', IntegerType::class)
+            ->add('category', EntityType::class, [
+                'class' => Category::class
+            ])
+            ->add('user', EntityType::class, [
+                'class' => User::class
+            ])
         ;
     }
 

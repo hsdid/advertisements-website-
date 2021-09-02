@@ -3,6 +3,7 @@
 namespace App\Serializer\Normalizer;
 
 use App\Entity\Product;
+use App\Entity\ProductAttribute;
 use ArrayObject;
 use Symfony\Component\Serializer\Exception\CircularReferenceException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
-class ProductNormalizer implements  NormalizerInterface
+class ProductAttributeNormalizer implements NormalizerInterface
 {
     /**
      * @var ObjectNormalizer
@@ -28,7 +29,6 @@ class ProductNormalizer implements  NormalizerInterface
     /**
      * ProductNormalizer constructor.
      * @param ObjectNormalizer $objectNormalizer
-     * @param UrlGeneratorInterface $router
      */
     public function __construct(
         ObjectNormalizer $objectNormalizer,
@@ -43,17 +43,15 @@ class ProductNormalizer implements  NormalizerInterface
      * @param mixed $object
      * @param string|null $format
      * @param array $context
-     * @return array|ArrayObject|bool|float|int|mixed|string|null
-     * @throws ExceptionInterface
+     * @return array
      */
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = []): array
     {
-        $context['ignored_attributes'] = ['savedProducts'];
-
-        $data = (array) $this->objectNormalizer->normalize($object, $format, $context);
-        $data['href']['self'] = $this->router->generate('api_get_one_product', ['id' => $object->getId()]);
-
-        return $data;
+        return [
+            'id' => $object->getId(),
+            'title' => $object->getTitle(),
+            'value' => $object->getValue()
+        ];
     }
 
     /**
@@ -63,6 +61,7 @@ class ProductNormalizer implements  NormalizerInterface
      */
     public function supportsNormalization($data, string $format = null): bool
     {
-        return $data instanceof Product;
+        return $data instanceof ProductAttribute;
     }
 }
+

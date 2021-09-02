@@ -79,18 +79,16 @@ class CreateProductController extends AbstractController
         $product = new Product();
 
         $data = json_decode($request->getContent(),true);
+        $data['user'] = $this->userResolver->getCurrentUser()->getId();
 
         $category = $this->categoryRepository->find($data['category']);
 
         if (! $category) {
             return $this->json(['errors' => 'Category dont exist']);
         }
-        // Get additional special attributes for product from category
+
         $categoryAttributes = $category->getAttributes();
 
-        //if the category has special attributes
-        // for the product, create a product attribute,
-        // adjust the data and add it to the product
         if (count($categoryAttributes) > 0) {
             foreach ($categoryAttributes as $attribute) {
 
@@ -102,14 +100,9 @@ class CreateProductController extends AbstractController
                 $this->productAttributeRepository->persist($productAttribute);
                 $product->addAttribute($productAttribute);
 
-                unset($data[$attribute->getKey()]);
+                unset($data[$attribute->getName()]);
             }
         }
-
-        unset($data['category']);
-
-        $product->setCategory($category);
-        $product->setUser($this->userResolver->getCurrentUser());
 
         $form = $this->createForm(ProductType::class, $product);
         $form->submit($data);

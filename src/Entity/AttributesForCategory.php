@@ -27,7 +27,7 @@ class AttributesForCategory
      * @var string
      * @ORM\Column(type="string", length=150)
      */
-    private string $key;
+    private string $name;
 
     /**
      * @var Category
@@ -64,14 +64,14 @@ class AttributesForCategory
         return $this;
     }
 
-    public function getKey(): string
+    public function getName(): ?string
     {
-        return $this->key;
+        return $this->name;
     }
 
-    public function setKey(string $key): self
+    public function setName(string $name): self
     {
-        $this->key = $key;
+        $this->name = $name;
 
         return $this;
     }

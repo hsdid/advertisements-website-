@@ -6,6 +6,7 @@ namespace App\Serializer\Normalizer;
 
 use App\Entity\User;
 use ArrayObject;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Exception\CircularReferenceException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
@@ -21,13 +22,20 @@ class UserNormalizer implements NormalizerInterface
      */
     private ObjectNormalizer $objectNormalizer;
 
+    private UrlGeneratorInterface $router;
+
     /**
      * ProductNormalizer constructor.
      * @param ObjectNormalizer $objectNormalizer
+     * @param UrlGeneratorInterface $router
      */
-    public function __construct(ObjectNormalizer $objectNormalizer)
+    public function __construct(
+        ObjectNormalizer $objectNormalizer,
+        UrlGeneratorInterface $router
+    )
     {
         $this->objectNormalizer = $objectNormalizer;
+        $this->router = $router;
     }
 
     /**

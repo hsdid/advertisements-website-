@@ -1,11 +1,10 @@
 <?php
 
-
 namespace App\Serializer\Normalizer;
-
 
 use App\Entity\Category;
 use ArrayObject;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Exception\CircularReferenceException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
@@ -19,14 +18,22 @@ class CategoryNormalizer implements NormalizerInterface
      * @var ObjectNormalizer
      */
     private ObjectNormalizer $objectNormalizer;
-
+    /**
+     * @var UrlGeneratorInterface
+     */
+    private UrlGeneratorInterface $router;
     /**
      * ProductNormalizer constructor.
      * @param ObjectNormalizer $objectNormalizer
+     * @param UrlGeneratorInterface $router
      */
-    public function __construct(ObjectNormalizer $objectNormalizer)
+    public function __construct(
+        ObjectNormalizer $objectNormalizer,
+        UrlGeneratorInterface $router
+    )
     {
         $this->objectNormalizer = $objectNormalizer;
+        $this->router = $router;
     }
 
     /**
@@ -38,7 +45,12 @@ class CategoryNormalizer implements NormalizerInterface
      */
     public function normalize($object, string $format = null, array $context = [])
     {
-        return $this->objectNormalizer->normalize($object, $format, $context);
+        $context['ignored_attributes'] = ['parent', 'products'];
+
+        $data = (array) $this->objectNormalizer->normalize($object, $format, $context);
+        $data['href']['self'] = $this->router->generate('api_get_one_category', ['id' => $object->getId()]);
+
+        return $data;
     }
 
     /**

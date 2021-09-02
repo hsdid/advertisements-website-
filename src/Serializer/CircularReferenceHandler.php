@@ -4,6 +4,7 @@
 namespace App\Serializer;
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Entity\ProductAttribute;
 use App\Entity\User;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
